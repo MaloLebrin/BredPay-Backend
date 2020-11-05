@@ -11,7 +11,7 @@ app.use(helmet());
 app.use(cors());
 app.use(formidableMiddleware());
 
-mongoose.connect("mongodb://localhost/boulangerie-api", {
+mongoose.connect("mongodb://localhost:27017/boulangerie-api", {
     useNewUrlParser: true,
     useUnifiedTopology: true,
     useCreateIndex: true,
@@ -23,16 +23,16 @@ cloudinary.config({
     api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-// const userRoutes = require("./routes/user");
+const userRoutes = require("./routes/user");
 // const roomRoutes = require("./routes/room");
-// app.use(userRoutes);
+app.use(userRoutes);
 // app.use(roomRoutes);
 
 
 app.all("*", (req, res) => {
-    res.status(404).json({ error: "Page not found" });
+    res.status(404).json({ error: "Page not found app.all" });
 });
 
-app.listen(process.env.PORT, () => {
+app.listen(3000, () => {
     console.log("Server has started");
 });

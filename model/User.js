@@ -17,7 +17,7 @@ const User = mongoose.model('User', {
         },
         firstname: String,
         lastname: String,
-        photo: Object
-    }
+    },
+    phone: String
 });
 module.exports = User;

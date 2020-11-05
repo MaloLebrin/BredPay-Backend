@@ -17,6 +17,7 @@ const Boulangerie = mongoose.model('Boulangerie', {
     postalCode: Number,
     city: String,
     country: String,
+    location: [Number],
     hours: {
         monday: String,
         tuesday: String,
@@ -26,7 +27,7 @@ const Boulangerie = mongoose.model('Boulangerie', {
         saturday: String,
         sunday: String,
     },
-    products : {
+    products: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "product",
     }
