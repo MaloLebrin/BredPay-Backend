@@ -9,6 +9,7 @@ const User = mongoose.model('User', {
     token: String,
     hash: String,
     salt: String,
+    roles: [String],
     account: {
         username: {
             type: String,
@@ -18,6 +19,12 @@ const User = mongoose.model('User', {
         firstname: String,
         lastname: String,
     },
-    phone: String
+    phone: String,
+    orders: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "order"
+        }
+    ]
 });
 module.exports = User;

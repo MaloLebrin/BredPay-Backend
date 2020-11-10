@@ -9,8 +9,9 @@ require("dotenv").config;
 
 const isAuthenticated = require('../middleware/isAuthenticated')
 const User = require('../model/User');
-const Boulangerie = require('../model/Boulangerie');
+const Company = require('../model/Company');
 const Product = require('../model/Product');
+const Order = require('../model/Order')
 
 router.get('/alluser', async (req, res) => {
     const alluser = await User.find().select('_id account token');
@@ -67,28 +68,6 @@ router.post('/user/signup', async (req, res) => {
     }
 })
 
-router.post('/user/login', async (req, res) => {
-    const { email, password } = req.fields;
-    if (email && password) {
-        try {
-            const userByMail = await User.findOne({ email })
-            if (userByMail) {
-                const newHash = await SHA256(password + userByMail.salt).toString(encBase64);
-                if (newHash === userByMail.hash) {
-                    return res.status(200).send('connection successfull')
-                } else
-                    return res.status(400).json({ error: 'password incorrect' })
-            } else {
-
-                res.status(400).send('Invalid email')
-            }
-        } catch (error) {
-            res.status(400).json({ error: error.message });
-        }
-    } else {
-        res.status(401).json({ error: 'missing parameters' })
-    }
-});
 
 router.put('/user/update-password/', isAuthenticated, async (req, res) => {
     try {

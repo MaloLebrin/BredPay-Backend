@@ -24,15 +24,17 @@ cloudinary.config({
 });
 
 const userRoutes = require("./routes/user");
-// const roomRoutes = require("./routes/room");
+const companyRoutes = require("./routes/company");
+const loginRoutes = require("./routes/login")
 app.use(userRoutes);
-// app.use(roomRoutes);
+app.use(companyRoutes);
+app.use(loginRoutes);
 
 
 app.all("*", (req, res) => {
     res.status(404).json({ error: "Page not found app.all" });
 });
 
-app.listen(3000, () => {
+app.listen(process.env.PORT || 3000, () => {
     console.log("Server has started");
 });

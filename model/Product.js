@@ -19,12 +19,12 @@ const Product = mongoose.model('Product', {
     },
     weight: Number,
     description: String,
-    allergens: String,
+    allergens: String, //peut être en faire une table
     cut: Boolean,
     photo: [Object],
-    boulangerie: {
+    company: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "boulangerie",
+        ref: "company",
     }
 })
 module.exports = Product;
