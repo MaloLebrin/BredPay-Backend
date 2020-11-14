@@ -15,7 +15,7 @@ const Order = require('../model/Order')
 
 router.get('/alluser', async (req, res) => {
     const alluser = await User.find().select('_id account token');
-    res.status(200).json({ alluser });
+    return res.status(200).json({ alluser });
 
 });
 router.post('/user/signup', async (req, res) => {
@@ -26,10 +26,10 @@ router.post('/user/signup', async (req, res) => {
         const userName = await User.findOne({ username })
 
         if (userName) {
-            res.status(400).json({ error: 'username already exists' })
+            return res.status(400).json({ error: 'username already exists' })
         }
         if (userMails) {
-            res.status(400).json({ error: "user's mail already exists" })
+            return res.status(400).json({ error: "user's mail already exists" })
         }
         else if (email || password || username || firstname || lastname) {
             const token = uid2(64);
@@ -50,7 +50,7 @@ router.post('/user/signup', async (req, res) => {
             });
             await newUser.save();
 
-            res.status(200).json({
+            return res.status(200).json({
                 _id: newUser._id,
                 token: newUser.token,
                 email: newUser.email,
@@ -59,12 +59,12 @@ router.post('/user/signup', async (req, res) => {
                 lastname: newUser.account.lastname,
             })
         } else {
-            res.status(400).json({
+            return res.status(400).json({
                 error: "Missing parameters.",
             });
         }
     } catch (error) {
-        res.status(400).json({ error: error.message });
+        return res.status(400).json({ error: error.message });
     }
 })
 
@@ -81,15 +81,15 @@ router.put('/user/update-password/', isAuthenticated, async (req, res) => {
                 user.hash = newHash;
                 user.salt = newSalt;
                 user.save();
-                res.status(200).json({ message: 'Successfully' })
+                return res.status(200).json({ message: 'Successfully' })
             } else {
-                res.status(401).json({ error: 'Invalid password' })
+                return res.status(401).json({ error: 'Invalid password' })
             }
         } else {
-            res.status(401).json({ error: 'missing parameters' })
+            return res.status(401).json({ error: 'missing parameters' })
         }
     } catch (error) {
-        res.status(400).json({ error: error.message });
+        return res.status(400).json({ error: error.message });
     }
 })
 
@@ -113,19 +113,19 @@ router.get('/user/recover-password/', isAuthenticated, async (req, res) => {
                 };
                 transporter.sendMail(mailOptions, (error, info) => {
                     if (error) {
-                        res.status(403).json(error);
+                        return res.status(403).json(error);
                     } else {
-                        res.status(200).json('Email sent' + info.response)
+                        return res.status(200).json('Email sent' + info.response)
                     }
                 })
             } else {
-                res.status(403).json({ error: "User doesn't exist" })
+                return res.status(403).json({ error: "User doesn't exist" })
             }
         } else {
-            res.status(403).json({ error: "missing parameters" })
+            return res.status(403).json({ error: "missing parameters" })
         }
     } catch (error) {
-        res.status(400).json({ error: error.message });
+        return res.status(400).json({ error: error.message });
 
     }
 });
@@ -141,15 +141,15 @@ router.delete("/user/delete/:id", isAuthenticated, async (req, res) => {
             if (user && String(req.user._id) === String(req.params.id) && currentUserToken === user.token) {
                 await User.findByIdAndRemove(req.params.id);
 
-                res.status(200).json({ message: "User deleted" });
+                return res.status(200).json({ message: "User deleted" });
             } else {
-                res.status(400).json({ error: "User not found" });
+                return res.status(400).json({ error: "User not found" });
             }
         } catch (error) {
-            res.status(400).json({ error: error.message });
+            return res.status(400).json({ error: error.message });
         }
     } else {
-        res.status(400).json({ error: "Missing user id" });
+        return res.status(400).json({ error: "Missing user id" });
     }
 });
 
@@ -169,7 +169,7 @@ router.put('/user/update/:id', isAuthenticated, async (req, res) => {
                     "account.username": username,
                 });
                 if (findByEmail || findByUsername) {
-                    res.status(403).json({ error: "Username or Email already exists" })
+                    return res.status(403).json({ error: "Username or Email already exists" })
                 } else {
                     user.account.username = username ? username : user.account.username;
                     user.email = email ? email : user.email;
@@ -178,20 +178,20 @@ router.put('/user/update/:id', isAuthenticated, async (req, res) => {
                     user.phone = phone ? phone : user.phone;
 
                     await user.save();
-                    res.status(200).json({
+                    return res.status(200).json({
                         _id: user._id,
                         email: user.email,
                         account: user.account
                     })
                 }
             } else {
-                res.status(400).json({ error: 'invalid' })
+                return res.status(400).json({ error: 'invalid' })
             }
         } catch (error) {
-            res.status(400).json({ error: error.message });
+            return res.status(400).json({ error: error.message });
         }
     } else {
-        res.status(400).json({ error: 'invalid user id' })
+        return res.status(400).json({ error: 'invalid user id' })
     }
 });
 
