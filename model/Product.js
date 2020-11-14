@@ -24,7 +24,7 @@ const Product = mongoose.model('Product', {
     photo: [Object],
     company: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "company",
+        ref: "Company",
     }
 })
 module.exports = Product;

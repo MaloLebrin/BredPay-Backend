@@ -31,7 +31,7 @@ const User = mongoose.model('User', {
     orders: [
         {
             type: mongoose.Schema.Types.ObjectId,
-            ref: "order"
+            ref: "Order"
         }
     ]
 });

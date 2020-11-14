@@ -12,15 +12,15 @@ const Order = mongoose.model('Order', {
     },
     company: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "company",
+        ref: "Company",
     },
     products: [{
         type: mongoose.Schema.Types.ObjectId,
-        ref: "product",
+        ref: "Product",
     }],
     user: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "user"
+        ref: "User"
     }
 
 })
