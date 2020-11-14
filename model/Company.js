@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-const Role = require('../middleware/role')
 
 const Company = mongoose.model('Company', {
     name: {
@@ -83,8 +82,8 @@ const Company = mongoose.model('Company', {
     photo: [Object],
     products: [{
         type: mongoose.Schema.Types.ObjectId,
-        ref: "product",
-    }],
+        ref: "Product",
+    },],
     orders: [
         {
             type: mongoose.Schema.Types.ObjectId,
