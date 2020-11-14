@@ -1,6 +1,5 @@
 const express = require('express');
 const router = express.Router();
-const uid2 = require('uid2');
 const SHA256 = require("crypto-js/sha256");
 const encBase64 = require("crypto-js/enc-base64");
 
@@ -12,16 +11,16 @@ router.post('/company-login', async (req, res) => {
             if (findCompany) {
                 const newhash = SHA256(password + findCompany.salt).toString(encBase64)
                 if (newhash === findCompany.hash) {
-                    res.status(200).json({ success: 'you are connected' })
+                    return res.status(200).json({ success: 'you are connected' })
                 }
             } else {
-                res.status(400).json({ error: 'Password invalid' })
+                return res.status(400).json({ error: 'Password invalid' })
             }
         } catch (error) {
-            res.status(400).json({ error: error.message });
+            return res.status(400).json({ error: error.message });
         }
     } else {
-        res.status(401).json({ error: 'missing parameters' })
+        return res.status(401).json({ error: 'missing parameters' })
     }
 })
 router.post('/user/login', async (req, res) => {
@@ -37,13 +36,13 @@ router.post('/user/login', async (req, res) => {
                     return res.status(400).json({ error: 'password incorrect' })
             } else {
 
-                res.status(400).send('Invalid email')
+                return res.status(400).send('Invalid email')
             }
         } catch (error) {
-            res.status(400).json({ error: error.message });
+            return res.status(400).json({ error: error.message });
         }
     } else {
-        res.status(401).json({ error: 'missing parameters' })
+        return res.status(401).json({ error: 'missing parameters' })
     }
 });
 
