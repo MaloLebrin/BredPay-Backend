@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const SHA256 = require("crypto-js/sha256");
 const encBase64 = require("crypto-js/enc-base64");
+const User = require('../model/User');
 
 router.post('/company-login', async (req, res) => {
     const { email, password } = req.fields;
