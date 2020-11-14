@@ -8,6 +8,8 @@ const cloudinary = require("cloudinary").v2;
 require("dotenv").config;
 
 const isAuthenticated = require('../middleware/isAuthenticated')
+const Role = require('../middleware/role');
+const checkRole = require('../middleware/checkRole');
 const User = require('../model/User');
 const Company = require('../model/Company');
 const Product = require('../model/Product');
@@ -16,7 +18,7 @@ const Order = require('../model/Order')
 router.get('/alluser', async (req, res) => {
     const alluser = await User.find().select('_id account token');
     return res.status(200).json({ alluser });
-
+    // don't forget to delete this route
 });
 router.post('/user/signup', async (req, res) => {
     try {
@@ -38,6 +40,7 @@ router.post('/user/signup', async (req, res) => {
 
             const newUser = new User({
                 email,
+                role: Role.User,
                 token,
                 hash,
                 salt,
@@ -69,7 +72,7 @@ router.post('/user/signup', async (req, res) => {
 })
 
 
-router.put('/user/update-password/', isAuthenticated, async (req, res) => {
+router.put('/user/update-password/', isAuthenticated, checkRole(Role.User), async (req, res) => {
     try {
         const { previousPassword, newPassword } = req.fields;
         if (previousPassword && newPassword && previousPassword !== newPassword) {
@@ -93,7 +96,7 @@ router.put('/user/update-password/', isAuthenticated, async (req, res) => {
     }
 })
 
-router.get('/user/recover-password/', isAuthenticated, async (req, res) => {
+router.get('/user/recover-password/', isAuthenticated, checkRole(Role.User), async (req, res) => {
     try {
         if (req.headers.authorization && req.user._id) {
             const user = await User.findById(req.user._id)
@@ -130,7 +133,7 @@ router.get('/user/recover-password/', isAuthenticated, async (req, res) => {
     }
 });
 
-router.delete("/user/delete/:id", isAuthenticated, async (req, res) => {
+router.delete("/user/delete/:id", isAuthenticated, checkRole(Role.User), async (req, res) => {
     if (req.params.id) {
         try {
             const user = await User.findById(req.params.id);
@@ -153,7 +156,7 @@ router.delete("/user/delete/:id", isAuthenticated, async (req, res) => {
     }
 });
 
-router.put('/user/update/:id', isAuthenticated, async (req, res) => {
+router.put('/user/update/:id', isAuthenticated, checkRole(Role.User), async (req, res) => {
     if (req.params.id) {
         try {
             const user = await User.findById(req.params.id)

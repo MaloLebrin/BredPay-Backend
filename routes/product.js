@@ -1,18 +1,17 @@
 const express = require('express');
 const router = express.Router();
-const SHA256 = require("crypto-js/sha256");
-const encBase64 = require("crypto-js/enc-base64");
 const cloudinary = require("cloudinary").v2;
 // const nodemailer = require("nodemailer");
 require("dotenv").config;
 
-const isAuthenticated = require('../middleware/isAuthenticated')
-const User = require('../model/User');
+const isAuthenticated = require('../middleware/isAuthenticated');
+const Role = require('../middleware/Role')
+const checkRole = require('../middleware/checkRole')
 const Company = require('../model/Company');
 const Product = require('../model/Product');
-const Order = require('../model/Order')
 
-router.post('/product-create', isAuthenticated, async (req, res) => {
+
+router.post('/product-create', isAuthenticated, checkRole(Role.Company), async (req, res) => {
     if (req.fields || req.files.pictures) {
         try {
             const { name, price, quantity, category, weight, description, allergens } = req.fields;
@@ -62,7 +61,7 @@ router.post('/product-create', isAuthenticated, async (req, res) => {
     }
 })
 
-router.delete('/product-delete/:id', isAuthenticated, async (req, res) => {
+router.delete('/product-delete/:id', isAuthenticated, checkRole(Role.Company), async (req, res) => {
     if (req.params) {
         try {
             const productId = req.params.id;
@@ -84,7 +83,6 @@ router.delete('/product-delete/:id', isAuthenticated, async (req, res) => {
                         return res.json({ error: error.message });
                     }
                 })
-
             } else {
                 return res.status(400).json({ error: "product not found" })
             }

@@ -8,6 +8,8 @@ const cloudinary = require("cloudinary").v2;
 require("dotenv").config;
 
 const isAuthenticated = require('../middleware/isAuthenticated')
+const Role = require('../middleware/Role')
+const checkRole = require('../middleware/checkRole')
 const User = require('../model/User');
 const Company = require('../model/Company');
 const Product = require('../model/Product');
@@ -40,7 +42,7 @@ router.get('/', async (req, res) => {
         }
     }
 })
-router.post('/company-addpictures/:id', isAuthenticated, async (req, res) => {
+router.post('/company-addpictures/:id', isAuthenticated, checkRole(Role.Company), async (req, res) => {
     if (req.files && req.user.id === req.params.id) {
         try {
             if (req.files.pictures) {
@@ -77,6 +79,7 @@ router.post('/create-account', async (req, res) => {
             const hash = SHA256(password + salt).toString(encBase64);
             const newCompany = new Company({
                 name,
+                role: Role.Company,
                 email,
                 token,
                 hash,
@@ -125,7 +128,7 @@ router.get('/:id', async (req, res) => {
         return res.status(400).json({ error: "no id company selected" });
     }
 })
-router.put('/company-update/:id', isAuthenticated, async (req, res) => {
+router.put('/company-update/:id', isAuthenticated, checkRole(Role.Company), async (req, res) => {
     if (req.headers.authorization && req.user._id && req.params.id) {
         const { name, email, username, firstname, lastname, phone, description, address, postalCode, city, country } = req.fields;
         const Location = [req.fields.location.long, req.fields.location.lat];
@@ -153,7 +156,7 @@ router.put('/company-update/:id', isAuthenticated, async (req, res) => {
     }
 })
 
-router.put('/company-hours/:id', isAuthenticated, async (req, res) => {
+router.put('/company-hours/:id', isAuthenticated, checkRole(Role.Company), async (req, res) => {
     if (req.headers.authorization && req.user._id && req.params.id) {
         try {
             const company = await Company.findById(req.params.id)
@@ -187,7 +190,7 @@ router.put('/company-hours/:id', isAuthenticated, async (req, res) => {
     }
 });
 
-router.delete('/company-delete/:id', isAuthenticated, async (req, res) => {
+router.delete('/company-delete/:id', isAuthenticated, checkRole(Role.Company), async (req, res) => {
     if (req.headers.authorization && req.user._id && req.params.id) {
         try {
             const company = await Company.findById(req.params.id)

@@ -1,7 +1,12 @@
 const mongoose = require('mongoose');
+const Role = require('../middleware/role')
 
 const Company = mongoose.model('Company', {
     name: {
+        type: String,
+        required: true
+    },
+    role: {
         type: String,
         required: true
     },

@@ -6,6 +6,10 @@ const User = mongoose.model('User', {
         required: true,
         unique: true
     },
+    role: {
+        type: String,
+        required: true
+    },
     token: String,
     hash: String,
     salt: String,
