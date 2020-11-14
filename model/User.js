@@ -18,6 +18,10 @@ const User = mongoose.model('User', {
         },
         firstname: String,
         lastname: String,
+        address: String,
+        postalCode: Number,
+        city: String,
+        country: String,
     },
     phone: String,
     orders: [
