@@ -61,6 +61,46 @@ router.post('/product-create', isAuthenticated, checkRole(Role.Company), async (
     }
 })
 
+router.get("/product/all", async (req, res) => {
+    if (req.headers.authorization) {
+        try {
+            const token = await req.headers.authorization.replace("Bearer ", "");
+            const company = await Company.findOne({ token: token })
+            if (company) {
+                const product = await Product.find({ company: company._id })
+                return res.status(200).json({ products: product, company: company.name })
+            }
+        } catch (error) {
+            return res.status(400).json({ error: error.message });
+        }
+    } else {
+        const product = await Product.find()
+        return (product ? res.status(200).json(product) : res.status(400).json({ error: 'No product found' }))
+    }
+})
+router.get('/product/:id', async (req, res) => {
+    if (req.params) {
+        try {
+            const product = await Product.findById(req.params.id)
+            if (product) {
+                const token = await req.headers.authorization.replace("Bearer ", "");
+                const company = await Company.findOne({ token: token })
+                if (company) {
+                    return res.status(200).json({ product: product, role: company.role })
+                } else {
+                    return res.status(200).json(product)
+                }
+            } else {
+                return res.status(400).json({ error: 'product not found' })
+            }
+        } catch (error) {
+            return res.status(400).json({ error: error.message });
+        }
+    } else {
+        return res.status(403).json({ error: 'missing parameters' })
+    }
+})
+
 router.delete('/product-delete/:id', isAuthenticated, checkRole(Role.Company), async (req, res) => {
     if (req.params) {
         try {
@@ -77,6 +117,7 @@ router.delete('/product-delete/:id', isAuthenticated, checkRole(Role.Company), a
                             {
                                 folder: `boulangerie/companies/${req.user._id}/products/`,
                             });
+
                         await Product.findByIdAndDelete(productId)
                         return res.status(200).json({ message: 'Product deleted' });
                     } catch (error) {
