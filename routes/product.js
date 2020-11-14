@@ -101,6 +101,32 @@ router.get('/product/:id', async (req, res) => {
     }
 })
 
+router.put('/product-update/:id', isAuthenticated, checkRole(Role.Company), async (req, res) => {
+    if (req.fields && req.params.id) {
+        try {
+            const { name, price, quantity, category, weight, description, allergens } = req.fields;
+            const product = await Product.findById(req.params.id)
+            if (product) {
+                product.productName = name ? name : product.name,
+                    product.price = price ? price : product.price,
+                    product.quantity = quantity ? quantity : product.quantity,
+                    product.category = category ? category : product.category,
+                    product.weight = weight ? weight : product.weight,
+                    product.description = description ? description : product.description,
+                    product.allergens = allergens ? allergens : product.allergens
+                await product.save();
+                return res.json(product)
+            } else {
+                return res.status(400).json({ error: 'product not found' })
+            }
+        } catch (error) {
+            return res.status(400).json({ error: error.message });
+        }
+    } else {
+        return res.status(403).json({ error: 'missing parameters' })
+    }
+})
+
 router.delete('/product-delete/:id', isAuthenticated, checkRole(Role.Company), async (req, res) => {
     if (req.params) {
         try {
