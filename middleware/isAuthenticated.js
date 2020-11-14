@@ -4,10 +4,10 @@ const isAuthenticated = async (req, res, next) => {
     if (req.headers.authorization) {
         const token = await req.headers.authorization.replace("Bearer ", "");
         const user = await User.findOne({ token: token }).select(
-            "account _id"
+            "account _id token"
         );
         if (!user) {
-            const company = await Company.findOne({ token: token }).select("account _id")
+            const company = await Company.findOne({ token: token }).select("account _id token")
             if (!company) {
                 return res.status(401).json({ error: "Unauthorized" });
             } else {
