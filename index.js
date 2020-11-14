@@ -9,7 +9,9 @@ require("dotenv").config;
 const app = express();
 app.use(helmet());
 app.use(cors());
-app.use(formidableMiddleware());
+app.use(formidableMiddleware({
+    multiples: true,
+}));
 
 mongoose.connect("mongodb://localhost:27017/boulangerie-api", {
     useNewUrlParser: true,
@@ -18,17 +20,19 @@ mongoose.connect("mongodb://localhost:27017/boulangerie-api", {
     useFindAndModify: false,
 });
 cloudinary.config({
-    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-    api_key: process.env.CLOUDINARY_API_KEY,
-    api_secret: process.env.CLOUDINARY_API_SECRET,
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME || "malolebrin",
+    api_key: process.env.CLOUDINARY_API_KEY || "212971842325324",
+    api_secret: process.env.CLOUDINARY_API_SECRET || "79KqyVOwveSqV7PGkTcez9btus4",
 });
 
 const userRoutes = require("./routes/user");
 const companyRoutes = require("./routes/company");
 const loginRoutes = require("./routes/login")
+const productRoutes = require("./routes/product");
 app.use(userRoutes);
 app.use(companyRoutes);
 app.use(loginRoutes);
+app.use(productRoutes);
 
 
 app.all("*", (req, res) => {
