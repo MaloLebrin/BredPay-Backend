@@ -17,7 +17,7 @@ const Order = require('../model/Order')
 
 router.get('/alluser', async (req, res) => {
     const alluser = await User.find().select('_id account token');
-    return res.status(200).json({ alluser });
+    return res.status(200).json(alluser);
     // don't forget to delete this route
 });
 router.post('/user/signup', async (req, res) => {
