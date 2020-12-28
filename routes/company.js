@@ -4,8 +4,7 @@ const uid2 = require('uid2');
 const SHA256 = require("crypto-js/sha256");
 const encBase64 = require("crypto-js/enc-base64");
 const cloudinary = require("cloudinary").v2;
-// const nodemailer = require("nodemailer");
-require("dotenv").config;
+const nodemailer = require("nodemailer");
 
 const isAuthenticated = require('../middleware/isAuthenticated')
 const Role = require('../middleware/Role')
@@ -19,7 +18,7 @@ router.get('/', async (req, res) => {
     const { latitude, longitude, distance } = req.query;
     if (latitude && longitude) {
         const maxDistance = distance ? distance : 2;
-        console.log(longitude, latitude);
+
         try {
             const company = await Company.find({
                 location: {
@@ -195,24 +194,67 @@ router.delete('/company-delete/:id', isAuthenticated, checkRole(Role.Company), a
         try {
             const company = await Company.findById(req.params.id)
             const currentUserToken = req.headers.authorization.replace("Bearer ", "");
+
             if (company && currentUserToken === company.token) {
                 const { email, password } = req.fields;
-
                 const newhash = await SHA256(password + company.salt).toString(encBase64);
+
                 if (newhash === company.hash && email === company.email) {
-                    const todelete = await Company.findOneAndDelete(req.params.id)
+                    await Company.findOneAndDelete(req.params.id)
                     return res.status(200).send('company deleted')
+
                 } else {
                     return res.status(401).send('Password is wrong')
                 }
+
             } else {
                 return res.status(403).send('company not found')
             }
+
         } catch (error) {
             return res.status(400).json({ error: error.message });
         }
+
     } else {
         return res.status(403).send('You are not authorized')
+    }
+})
+
+router.put('/recover-password', isAuthenticated, checkRole(Role.Company), async (req, res) => {
+    try {
+        const company = await Company.findById(req.user._id)
+        if (company) {
+            const transporter = await nodemailer.createTransport({
+                service: 'gmail',
+                auth: {
+                    user: `${process.env.MAIL_ADRESS}`,
+                    pass: `${process.env.MAIL_MDP}`,
+                }
+            })
+
+            const mailOptions = {
+                from: `${process.env.MAIL_ADRESS}`,
+                to: company.email,
+                subject: 'Changez votre mot de passe',
+                text: `vous recevez ce mail parceque vous avez demandé à reset votre mot de passe. \n\n` +
+                    `Cliquer sur le lien suivant afin de mettre a jour votre mot de passe. Ce lien est valable 1h :\n\n` +
+                    `http://localhost:3000/reset/${company.token}`,
+            }
+
+            transporter.sendMail(mailOptions, (error, info) => {
+                if (error) {
+                    return res.status(403).json(error);
+                } else {
+                    return res.status(200).json('Email sent' + info.response)
+                }
+            })
+
+        } else {
+            return res.status(403).json({ error: 'company not found' })
+        }
+
+    } catch (error) {
+        return res.status(400).json({ error: error.message });
     }
 })
 

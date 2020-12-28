@@ -60,21 +60,45 @@ router.post('/product-create', isAuthenticated, checkRole(Role.Company), async (
     }
 })
 
-router.get("/product/all", async (req, res) => {
+router.get("/product/all", isAuthenticated, checkRole(Role.Company), async (req, res) => {
     if (req.headers.authorization) {
         try {
             const token = await req.headers.authorization.replace("Bearer ", "");
             const company = await Company.findOne({ token: token })
+
             if (company) {
                 const product = await Product.find({ company: company._id })
-                return res.status(200).json({ products: product, company: company.name })
+                return res.status(200).json({ products: product, company: company })
             }
+
         } catch (error) {
             return res.status(400).json({ error: error.message });
         }
+
     } else {
-        const product = await Product.find()
-        return (product ? res.status(200).json(product) : res.status(400).json({ error: 'No product found' }))
+        try {
+            const { page, search } = req.query;
+            let limit
+            let filters
+            const SEARCH = new RegExp(search, 'i')
+            if (search) {
+                filters = {
+                    productName: SEARCH,
+                }
+
+            } else {
+                limit = Number(req.query.limit)
+            }
+            const skip = (page - 1) * limit
+
+            const product = await Product.find(filters).skip(skip).limit(limit);
+            const count = await Product.countDocuments();
+
+            return (product ? res.status(200).json({ products: product, count: count }) : res.status(400).json({ error: 'No product found' }))
+
+        } catch (error) {
+            return res.status(400).json({ error: error.message });
+        }
     }
 })
 
