@@ -15,11 +15,12 @@ const Company = require('../model/Company');
 const Product = require('../model/Product');
 const Order = require('../model/Order')
 
-router.get('/alluser', async (req, res) => {
+router.get('/alluser', isAuthenticated, checkRole(Role.Admin), async (req, res) => {
     const alluser = await User.find().select('_id account token');
     return res.status(200).json(alluser);
     // don't forget to delete this route
 });
+
 router.post('/user/signup', async (req, res) => {
     try {
         const { email, password, firstname, lastname, phone, username } = req.fields;
@@ -100,20 +101,25 @@ router.get('/user/recover-password/', isAuthenticated, checkRole(Role.User), asy
     try {
         if (req.headers.authorization && req.user._id) {
             const user = await User.findById(req.user._id)
+
             if (user) {
                 const transporter = await nodemailer.createTransport({
                     service: 'gmail',
                     auth: {
-                        user: process.env.MAILADRESS,
-                        pass: process.env.MAILPASSWORD,
+                        user: `${process.env.MAIL_ADRESS}`,
+                        pass: `${process.env.MAIL_MDP}`,
                     }
                 })
+
                 const mailOptions = {
-                    from: process.env.MAILADRESS,
+                    from: `${process.env.MAIL_ADRESS}`,
                     to: user.email,
                     subject: 'Changez votre mot de passe',
-                    text: "it's easy! with process.env"
+                    text: `vous recevez ce mail parceque vous avez demandé à reset votre mot de passe. \n\n` +
+                        `Cliquer sur le lien suivant afin de mettre a jour votre mot de passe. Ce lien est valable 1h :\n\n` +
+                        `http://localhost:3000/reset/${user.token}`,
                 };
+
                 transporter.sendMail(mailOptions, (error, info) => {
                     if (error) {
                         return res.status(403).json(error);
@@ -121,12 +127,15 @@ router.get('/user/recover-password/', isAuthenticated, checkRole(Role.User), asy
                         return res.status(200).json('Email sent' + info.response)
                     }
                 })
+
             } else {
                 return res.status(403).json({ error: "User doesn't exist" })
             }
+
         } else {
             return res.status(403).json({ error: "missing parameters" })
         }
+
     } catch (error) {
         return res.status(400).json({ error: error.message });
 
