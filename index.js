@@ -4,7 +4,7 @@ const formidableMiddleware = require("express-formidable");
 const cors = require("cors");
 const helmet = require("helmet");
 const cloudinary = require("cloudinary").v2;
-require("dotenv").config;
+require("dotenv").config();
 
 const app = express();
 app.use(helmet());
@@ -29,10 +29,12 @@ const userRoutes = require("./routes/user");
 const companyRoutes = require("./routes/company");
 const loginRoutes = require("./routes/login")
 const productRoutes = require("./routes/product");
+const orderRoutes = require("./routes/order");
 app.use(userRoutes);
 app.use(companyRoutes);
 app.use(loginRoutes);
 app.use(productRoutes);
+app.use(orderRoutes)
 
 
 app.all("*", (req, res) => {
