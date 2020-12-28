@@ -25,12 +25,12 @@ router.post('/new-order', isAuthenticated, checkRole(Role.User), async (req, res
         const transporter = nodemailer.createTransport({
             service: 'gmail',
             auth: {
-                user: `${process.env.YAHOO_ADRESS}`,
-                pass: `${process.env.YAHOO_MDP}`
+                user: `${process.env.MAIL_ADRESS}`,
+                pass: `${process.env.MAIL_MDP}`
             }
         });
         const mailOptions = {
-            from: `${process.env.YAHOO_ADRESS}`,
+            from: `${process.env.MAIL_ADRESS}`,
             to: `${res.user.email}`,
             subject: `Confirmation de commande ${newOrder._id}`,
             text: `votre commande a bien été envoyé à la boulangerie`
