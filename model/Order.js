@@ -10,6 +10,13 @@ const Order = mongoose.model('Order', {
         unique: true,
         required: true
     },
+    delivery: {
+        type: Boolean,
+        required: true
+    },
+    deliveryTime: {
+        type: Date,
+    },
     company: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Company",
