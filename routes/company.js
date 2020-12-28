@@ -220,6 +220,26 @@ router.delete('/company-delete/:id', isAuthenticated, checkRole(Role.Company), a
     }
 })
 
+router.get('/company/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const company = await Company.findById(id);
+        return res.status(200).json({
+            id: company._id,
+            name: company.name,
+            token: company.token,
+            email: company.email,
+            username: company.account.username,
+            adress: company.adress,
+            phone: company.phone,
+            city: company.city,
+            postalCode: company.postalCode,
+        })
+    } catch (error) {
+        return res.status(400).json({ error: error.message });
+    }
+})
+
 router.put('/recover-password', isAuthenticated, checkRole(Role.Company), async (req, res) => {
     try {
         const company = await Company.findById(req.user._id)
