@@ -23,18 +23,14 @@ router.get('/alluser', isAuthenticated, checkRole(Role.Admin), async (req, res) 
 
 router.post('/user/signup', async (req, res) => {
     try {
-        const { email, password, firstname, lastname, phone, username } = req.fields;
+        const { email, password, firstname, lastname, phone } = req.fields;
 
         const userMails = await User.findOne({ email })
-        const userName = await User.findOne({ username })
 
-        if (userName) {
-            return res.status(400).json({ error: 'username already exists' })
-        }
         if (userMails) {
             return res.status(400).json({ error: "user's mail already exists" })
         }
-        else if (email || password || username || firstname || lastname) {
+        else if (email || password || firstname || lastname) {
             const token = uid2(64);
             const salt = uid2(64);
             const hash = SHA256(password + salt).toString(encBase64);
@@ -46,7 +42,6 @@ router.post('/user/signup', async (req, res) => {
                 hash,
                 salt,
                 account: {
-                    username,
                     firstname,
                     lastname,
                 },
