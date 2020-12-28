@@ -20,9 +20,9 @@ mongoose.connect("mongodb://localhost:27017/boulangerie-api", {
     useFindAndModify: false,
 });
 cloudinary.config({
-    cloud_name: process.env.CLOUDINARY_CLOUD_NAME || "malolebrin",
-    api_key: process.env.CLOUDINARY_API_KEY || "212971842325324",
-    api_secret: process.env.CLOUDINARY_API_SECRET || "79KqyVOwveSqV7PGkTcez9btus4",
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
 const userRoutes = require("./routes/user");
