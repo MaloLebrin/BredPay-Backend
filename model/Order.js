@@ -7,6 +7,7 @@ const Order = mongoose.model('Order', {
     },
     amount: {
         type: Number,
+        required: true
     },
     delivery: {
         type: Boolean,
