@@ -43,10 +43,10 @@ router.get('/', async (req, res) => {
     }
 })
 router.post('/company-addpictures/:id', isAuthenticated, checkRole(Role.Company), async (req, res) => {
-    if (req.files && req.user.id === req.params.id) {
+    if (req.files && req.user._id === req.params.id) {
         try {
             if (req.files.pictures) {
-                const company = await Company.findById(req.user.id)
+                const company = await Company.findById(req.user._id)
                 const result = await cloudinary.uploader.upload(req.files.pictures.path, { //Only one picture
                     folder: `boulangerie/companies/${company._id}`,
                 })
