@@ -15,6 +15,7 @@ const Product = require('../model/Product');
 const Order = require('../model/Order')
 
 router.get('/', async (req, res) => {
+    console.log('danslarequete');
     const { latitude, longitude, distance } = req.query;
     if (latitude && longitude) {
         const maxDistance = distance ? distance : 2;
@@ -25,16 +26,18 @@ router.get('/', async (req, res) => {
                     $near: [latitude, longitude],
                     $maxDistance: 10,
                 }
-            }).select('_id token name email adress description phone postalCode city country location openingHours photo products');
-            company
-
-            return res.status(200).json(company)
+            })
+                .populate("products")
+                .select('_id token name email address description phone postalCode city country location openingHours photo products')
+            return res.status(200).json({ companies: company, count })
         } catch (error) {
             return res.status(400).json({ error: error.message });
         }
     } else {
         try {
-            const company = await Company.find().select('_id token name email adress description phone postalCode city country location openingHours photo products')
+            const company = await Company.find()
+                .select('_id token name email address description phone postalCode city country location openingHours photo products')
+                .populate('products')
             return res.status(200).json(company)
         } catch (error) {
             return res.status(400).json({ error: error.message });
