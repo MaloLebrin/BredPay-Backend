@@ -60,8 +60,8 @@ router.post('/product-create', isAuthenticated, checkRole(Role.Company), async (
     }
 })
 
-router.get("/product/all", isAuthenticated, checkRole(Role.Company), async (req, res) => {
-    if (req.headers.authorization) {
+router.get("/product/all", isAuthenticated, async (req, res) => {
+    if (req.user.role === Role.Company) {
         try {
             const token = await req.headers.authorization.replace("Bearer ", "");
             const company = await Company.findOne({ token: token })
