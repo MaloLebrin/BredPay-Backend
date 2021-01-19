@@ -1,6 +1,27 @@
-const mongoose = require('mongoose');
+import mongoose = require('mongoose');
+import { Document, Model, model, Schema } from 'mongoose';
 
-const User = mongoose.model('User', {
+export interface User extends Document {
+    email: string;
+    role: string;
+    token: string;
+    hash: string;
+    salt: string;
+    orders: Array<Schema.Types.ObjectId>
+    phone: string;
+    account: Account;
+}
+type Account = {
+    username: string;
+    firstname?: string;
+    lastname?: string;
+    adress: string;
+    postalCode: number;
+    city: string;
+    country: string;
+}
+
+const User = new Schema<User>({
     email: {
         type: String,
         required: true,
@@ -34,4 +55,4 @@ const User = mongoose.model('User', {
         }
     ]
 });
-module.exports = User;
+export default model<User>("User", User)

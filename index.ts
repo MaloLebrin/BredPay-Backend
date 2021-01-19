@@ -1,9 +1,9 @@
-const express = require("express");
-const mongoose = require("mongoose");
-const formidableMiddleware = require("express-formidable");
-const cors = require("cors");
-const helmet = require("helmet");
-const cloudinary = require("cloudinary").v2;
+import express = require("express");
+import mongoose = require("mongoose");
+import formidableMiddleware = require("express-formidable");
+import cors = require("cors");
+import helmet = require("helmet");
+import cloudinary = require("cloudinary");
 require("dotenv").config();
 
 const app = express();
@@ -19,22 +19,22 @@ mongoose.connect("mongodb://localhost:27017/boulangerie-api", {
     useCreateIndex: true,
     useFindAndModify: false,
 });
-cloudinary.config({
+cloudinary.v2.config({
     cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
     api_key: process.env.CLOUDINARY_API_KEY,
     api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-const userRoutes = require("./routes/user");
-const companyRoutes = require("./routes/company");
-const loginRoutes = require("./routes/login")
-const productRoutes = require("./routes/product");
-const orderRoutes = require("./routes/order");
-app.use(userRoutes);
-app.use(companyRoutes);
-app.use(loginRoutes);
-app.use(productRoutes);
-app.use(orderRoutes)
+// import userRoutes from "./routes/user";
+// import companyRoutes from "./routes/company";
+// import loginRoutes from "./routes/login";
+// import productRoutes from "./routes/product";
+// import orderRoutes from "./routes/order";
+// app.use(userRoutes);
+// app.use(companyRoutes);
+// app.use(loginRoutes);
+// app.use(productRoutes);
+// app.use(orderRoutes)
 
 
 app.all("*", (req, res) => {
