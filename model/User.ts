@@ -1,5 +1,4 @@
-import mongoose = require('mongoose');
-import { Document, Model, model, Schema } from 'mongoose';
+import { Document, model, Schema } from 'mongoose';
 
 export interface User extends Document {
     email: string;
@@ -11,7 +10,8 @@ export interface User extends Document {
     phone: string;
     account: Account;
 }
-type Account = {
+
+export type Account = {
     username: string;
     firstname?: string;
     lastname?: string;
@@ -50,7 +50,7 @@ const User = new Schema<User>({
     phone: String,
     orders: [
         {
-            type: mongoose.Schema.Types.ObjectId,
+            type: Schema.Types.ObjectId,
             ref: "Order"
         }
     ]

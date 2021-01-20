@@ -1,6 +1,34 @@
-const mongoose = require('mongoose');
+import { Document, model, Schema } from 'mongoose';
+import { Photo, Day, OpeningDay } from '../types/types'
 
-const Company = mongoose.model('Company', {
+export interface Company extends Document {
+    name: string;
+    role: string;
+    email: string;
+    hash: string;
+    salt: string;
+    token: string;
+    account: Account;
+    description: string;
+    phone: string;
+    address: string;
+    postalCode: number;
+    city: string;
+    country: string;
+    location: Array<number>;
+    photo: Array<Photo>;
+    openingHours: OpeningDay;
+    products: Array<Schema.Types.ObjectId>;
+    orders: Array<Schema.Types.ObjectId>;
+}
+
+export type Account = {
+    username: string
+    firstname?: string
+    lastname?: string
+}
+
+const Company = new Schema<Company>({
     name: {
         type: String,
         required: true
@@ -26,7 +54,6 @@ const Company = mongoose.model('Company', {
         type: String,
         unique: true
     },
-
     account: {
         username: {
             type: String,
@@ -81,14 +108,15 @@ const Company = mongoose.model('Company', {
     },
     photo: [Object],
     products: [{
-        type: mongoose.Schema.Types.ObjectId,
+        type: Schema.Types.ObjectId,
         ref: "Product",
     },],
     orders: [
         {
-            type: mongoose.Schema.Types.ObjectId,
+            type: Schema.Types.ObjectId,
             ref: "order"
         }
     ]
 })
-module.exports = Company;
+
+export default model<Company>("Company", Company)
