@@ -15,6 +15,3 @@ export type OpeningDay = {
 export type Photo = {
     path: string;
 }
-
-
-
