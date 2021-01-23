@@ -1,6 +1,11 @@
-const isAuthenticated = async (req, res, next) => {
-    const User = require("../model/User");
-    const Company = require("../model/Company");
+import { Request, Response, NextFunction } from "express";
+import User from '../model/User'
+import Company from '../model/Company'
+import { IGetUserAuthInfoRequest } from "../types/types";
+
+const isAuthenticated = async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
+    // const User = require("../model/User");
+    // const Company = require("../model/Company");
 
     if (req.headers.authorization) {
         const token = await req.headers.authorization.replace("Bearer ", "");
@@ -11,7 +16,7 @@ const isAuthenticated = async (req, res, next) => {
         if (!user) {
             const company = await Company.findOne({ token: token }).select("account _id token email role");
             if (!company) {
-                return res.status(401).json({ error: "Unauthorized" });
+                return res.status(401).send({ error: "Unauthorized" });
 
             } else {
                 req.user = company
@@ -27,5 +32,4 @@ const isAuthenticated = async (req, res, next) => {
         return res.status(401).json({ error: "non authorizé" });
     }
 };
-
-module.exports = isAuthenticated;
+export default isAuthenticated;

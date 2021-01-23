@@ -1,6 +1,7 @@
 import { Document, model, Schema } from 'mongoose';
 
 export interface User extends Document {
+    _id: Schema.Types.ObjectId;
     email: string;
     role: string;
     token: string;
@@ -55,4 +56,5 @@ const User = new Schema<User>({
         }
     ]
 });
-export default model<User>("User", User)
+// export default model<User>("User", User)
+export default model<User>("User")
