@@ -1,11 +1,13 @@
-const express = require('express');
+import express, { Request, Response } from 'express'
 const router = express.Router();
-const SHA256 = require("crypto-js/sha256");
-const encBase64 = require("crypto-js/enc-base64");
-const User = require('../model/User');
+import SHA256 from 'crypto-js/sha256'
+import encBase64 from 'crypto-js/enc-base64'
+import User from '../model/User'
+import Company from '../model/Company';
 
-router.post('/company-login', async (req, res) => {
-    const { email, password } = req.fields;
+router.post('/company-login', async (req: Request, res: Response) => {
+    const email : string = req.fields?.email
+    const password: string = req.fields?.password
     if (email && password) {
         try {
             const findCompany = await Company.findOne({ email: email })
@@ -25,7 +27,8 @@ router.post('/company-login', async (req, res) => {
     }
 })
 router.post('/user/login', async (req, res) => {
-    const { email, password } = req.fields;
+    const email : string = req.fields?.email
+    const password: string = req.fields?.password
     if (email && password) {
         try {
             const userByMail = await User.findOne({ email })
@@ -52,4 +55,4 @@ router.post('/user/login', async (req, res) => {
     }
 });
 
-module.exports = router; 
+export default router; 

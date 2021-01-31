@@ -4,9 +4,6 @@ import Company from '../model/Company'
 import { IGetUserAuthInfoRequest } from "../types/types";
 
 const isAuthenticated = async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
-    // const User = require("../model/User");
-    // const Company = require("../model/Company");
-
     if (req.headers.authorization) {
         const token = await req.headers.authorization.replace("Bearer ", "");
         const user = await User.findOne({ token: token }).select(

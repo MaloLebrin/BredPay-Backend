@@ -5,19 +5,17 @@ import Company from '../model/Company'
 import { IGetUserAuthInfoRequest } from "../types/types";
 
 
-const checkRole = (Role: Roles) => {
+const checkRole = (Role: Role) => {
     return async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
-        // const Company = require("../model/Company");
         const company = await Company.findById(req.user._id)
         if (!company) {
-            // const User = require("../model/User");
             const user = await User.findById(req.user._id)
             if (!user) {
                 return res.status(401).send("Not Allowed")
-            } else if (user.role === Role.User) {
+            } else if (user.role === Role) {
                 return next()
             }
-        } else if (company.role === Role.Company) {
+        } else if (company.role === Role) {
             return next();
         }
         else {

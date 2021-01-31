@@ -1,21 +1,22 @@
-const express = require('express');
-const router = express.Router();
-const uid2 = require('uid2');
-const SHA256 = require("crypto-js/sha256");
-const encBase64 = require("crypto-js/enc-base64");
-const cloudinary = require("cloudinary").v2;
-// const nodemailer = require("nodemailer");
+import express, { Request, Response } from 'express'
+const router = express.Router()
+import uid2 from 'uid2'
+import SHA256 from "crypto-js/sha256"
+import encBase64 from "crypto-js/enc-base64"
+import cloudinary from "cloudinary"
+import nodemailer from "nodemailer"
 require("dotenv").config;
 
-const isAuthenticated = require('../middleware/isAuthenticated')
-const Role = require('../middleware/role');
-const checkRole = require('../middleware/checkRole');
-const User = require('../model/User');
-const Company = require('../model/Company');
-const Product = require('../model/Product');
-const Order = require('../model/Order')
+import isAuthenticated from '../middleware/isAuthenticated'
+import { Role, Roles } from '../middleware/role'
+import checkRole from '../middleware/checkRole'
+import User from '../model/User'
+import Company from '../model/Company'
+import Product from '../model/Product'
+import Order from '../model/Order'
+import { IGetUserAuthInfoRequest } from '../types/types'
 
-router.get('/alluser', isAuthenticated, checkRole(Role.Admin), async (req, res) => {
+router.get('/alluser', isAuthenticated, checkRole(Role.Admin), async (req : Request, res: Response) => {
     const alluser = await User.find().select('_id account token');
     return res.status(200).json(alluser);
     // don't forget to delete this route
@@ -23,7 +24,11 @@ router.get('/alluser', isAuthenticated, checkRole(Role.Admin), async (req, res) 
 
 router.post('/user/signup', async (req, res) => {
     try {
-        const { email, password, firstname, lastname, phone } = req.fields;
+        const email : string = req.fields?.email
+        const password: string = req.fields?.password
+        const firstname: string = req.fields?.firstname
+        const lastname: string = req.fields?.lastname
+        const phone: string = req.fields?.phone
 
         const userMails = await User.findOne({ email })
 
@@ -68,9 +73,10 @@ router.post('/user/signup', async (req, res) => {
 })
 
 
-router.put('/user/update-password/', isAuthenticated, checkRole(Role.User), async (req, res) => {
+router.put('/user/update-password/', isAuthenticated, checkRole(Role.User), async (req: IGetUserAuthInfoRequest, res: Response) => {
     try {
-        const { previousPassword, newPassword } = req.fields;
+        const previousPassword :string = req.fields?.previousPassword
+        const newPassword: string = req.fields?.newPassword
         if (previousPassword && newPassword && previousPassword !== newPassword) {
             const user = await User.findById(req.user._id)
             if (user && SHA256(previousPassword + user.salt).toString(encBase64) ===
@@ -92,7 +98,7 @@ router.put('/user/update-password/', isAuthenticated, checkRole(Role.User), asyn
     }
 })
 
-router.get('/user/recover-password/', isAuthenticated, checkRole(Role.User), async (req, res) => {
+router.get('/user/recover-password/', isAuthenticated, checkRole(Role.User), async (req: IGetUserAuthInfoRequest, res: Response) => {
     try {
         if (req.headers.authorization && req.user._id) {
             const user = await User.findById(req.user._id)
@@ -137,11 +143,11 @@ router.get('/user/recover-password/', isAuthenticated, checkRole(Role.User), asy
     }
 });
 
-router.delete("/user/delete/:id", isAuthenticated, checkRole(Role.User), async (req, res) => {
+router.delete("/user/delete/:id", isAuthenticated, checkRole(Role.User), async (req: IGetUserAuthInfoRequest, res: Response) => {
     if (req.params.id) {
         try {
             const user = await User.findById(req.params.id);
-            const currentUserToken = await req.headers.authorization.replace(
+            const currentUserToken = req.headers.authorization?.replace(
                 "Bearer ",
                 ""
             );
@@ -160,15 +166,20 @@ router.delete("/user/delete/:id", isAuthenticated, checkRole(Role.User), async (
     }
 });
 
-router.put('/user/update/:id', isAuthenticated, checkRole(Role.User), async (req, res) => {
+router.put('/user/update/:id', isAuthenticated, checkRole(Role.User), async (req: IGetUserAuthInfoRequest, res: Response) => {
     if (req.params.id) {
         try {
             const user = await User.findById(req.params.id)
-            const currentUserToken = await req.headers.authorization.replace(
+            const currentUserToken = req.headers.authorization?.replace(
                 "Bearer ",
                 "")
             if (user && String(req.user._id) === String(req.params.id) && currentUserToken === user.token) {
-                const { email, username, firstname, lastname, phone } = req.fields;
+                const email : string = req.fields?.email
+                const username: string = req.fields?.username
+                const firstname: string = req.fields?.firstname
+                const lastname: string = req.fields?.lastname
+                const phone: string = req.fields?.phone
+
                 const findByEmail = await User.findOne({
                     email: email,
                 });
@@ -202,4 +213,4 @@ router.put('/user/update/:id', isAuthenticated, checkRole(Role.User), async (req
     }
 });
 
-module.exports = router; 
+export default router; 

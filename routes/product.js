@@ -10,7 +10,7 @@ const Company = require('../model/Company');
 const Product = require('../model/Product');
 
 
-router.post('/product-create', isAuthenticated, checkRole(Role.Company), async (req, res) => {
+router.post('/product-create', isAuthenticated(), checkRole(Role.Company), async (req, res) => {
     if (req.fields || req.files.pictures) {
         try {
             const { name, price, quantity, category, weight, description, allergens } = req.fields;

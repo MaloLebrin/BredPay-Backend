@@ -35,6 +35,8 @@
     "@types/express-formidable": "^1.0.4",
     "@types/helmet": "^4.0.0",
     "@types/mongoose": "^5.10.3",
+    "@types/nodemailer": "^6.4.0",
+    "@types/uid2": "0.0.0",
     "ts-node-dev": "^1.1.1"
   }
 }
