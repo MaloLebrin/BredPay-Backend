@@ -1,6 +1,6 @@
 import { Document, model, Schema } from 'mongoose';
 
-export interface Order extends Document {
+export interface OrderType extends Document {
     date: Date;
     amount: number;
     delivery: boolean;
@@ -10,7 +10,7 @@ export interface Order extends Document {
     user: Schema.Types.ObjectId;
 }
 
-const Order = new Schema<Order>({
+const OrderSchema = new Schema<OrderType>({
     date: {
         type: Date,
         required: true
@@ -39,43 +39,5 @@ const Order = new Schema<Order>({
         ref: "User"
     }
 })
-
-export default model<Order>("Order", Order)
-
-
-
-
-
-// const mongoose = require('mongoose');
-
-// const Order = mongoose.model('Order', {
-//     date: {
-//         type: Date,
-//         required: true
-//     },
-//     amount: {
-//         type: Number,
-//         required: true
-//     },
-//     delivery: {
-//         type: Boolean,
-//         required: true
-//     },
-//     deliveryTime: {
-//         type: Date,
-//     },
-//     company: {
-//         type: mongoose.Schema.Types.ObjectId,
-//         ref: "Company",
-//     },
-//     products: [{
-//         type: mongoose.Schema.Types.ObjectId,
-//         ref: "Product",
-//     }],
-//     user: {
-//         type: mongoose.Schema.Types.ObjectId,
-//         ref: "User"
-//     }
-
-// })
-// module.exports = Order;
+const Order = model<OrderType>("Order", OrderSchema)
+export default Order

@@ -1,13 +1,12 @@
-import { Role, Roles } from "./role";
-import { Request, Response, NextFunction } from 'express'
+import { Role } from "./role";
+import { Response, NextFunction } from 'express'
 import User from '../model/User'
-import Company from '../model/Company'
-import { IGetUserAuthInfoRequest } from "../types/types";
+import Company, { CompanyType } from '../model/Company'
 
 
 const checkRole = (Role: Role) => {
-    return async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
-        const company = await Company.findById(req.user._id)
+    return async (req: any, res: Response, next: NextFunction) => {
+        const company: CompanyType = await Company.findById(req.user._id)
         if (!company) {
             const user = await User.findById(req.user._id)
             if (!user) {

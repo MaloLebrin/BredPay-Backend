@@ -12,7 +12,7 @@ router.post('/company-login', async (req: Request, res: Response) => {
         try {
             const findCompany = await Company.findOne({ email: email })
             if (findCompany) {
-                const newhash = SHA256(password + findCompany.salt).toString(encBase64)
+                const newhash: string = SHA256(password + findCompany.salt).toString(encBase64)
                 if (newhash === findCompany.hash) {
                     return res.status(200).json({ success: 'you are connected' })
                 }
@@ -33,7 +33,7 @@ router.post('/user/login', async (req, res) => {
         try {
             const userByMail = await User.findOne({ email })
             if (userByMail) {
-                const newHash = await SHA256(password + userByMail.salt).toString(encBase64);
+                const newHash: string = await SHA256(password + userByMail.salt).toString(encBase64);
                 if (newHash === userByMail.hash) {
                     return res.status(200).send({
                         email: userByMail.email,

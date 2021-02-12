@@ -1,11 +1,10 @@
-import { Request, Response, NextFunction } from "express";
+import { Response, NextFunction } from "express";
 import User from '../model/User'
 import Company from '../model/Company'
-import { IGetUserAuthInfoRequest } from "../types/types";
 
-const isAuthenticated = async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
+const isAuthenticated = async (req: any, res: Response, next: NextFunction) => {
     if (req.headers.authorization) {
-        const token = await req.headers.authorization.replace("Bearer ", "");
+        const token: string = await req.headers.authorization.replace("Bearer ", "");
         const user = await User.findOne({ token: token }).select(
             "account _id token email role"
         );

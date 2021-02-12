@@ -1,6 +1,6 @@
 import { Document, model, Schema } from 'mongoose';
 
-export interface User extends Document {
+export interface UserType extends Document {
     _id: Schema.Types.ObjectId;
     email: string;
     role: string;
@@ -22,7 +22,7 @@ export type Account = {
     country: string;
 }
 
-const User = new Schema<User>({
+const UserSchema = new Schema<UserType>({
     email: {
         type: String,
         required: true,
@@ -56,5 +56,5 @@ const User = new Schema<User>({
         }
     ]
 });
-// export default model<User>("User", User)
-export default model<User>("User")
+const User = model<UserType>("User", UserSchema)
+export default User

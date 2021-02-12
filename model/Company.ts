@@ -1,7 +1,7 @@
 import { Document, model, Schema } from 'mongoose';
 import { Photo, Day, OpeningDay } from '../types/types'
 
-export interface Company extends Document {
+export interface CompanyType extends Document {
     name: string;
     role: string;
     email: string;
@@ -28,7 +28,7 @@ export type Account = {
     lastname?: string
 }
 
-const Company = new Schema<Company>({
+const CompanySchema = new Schema<CompanyType>({
     name: {
         type: String,
         required: true
@@ -118,5 +118,5 @@ const Company = new Schema<Company>({
         }
     ]
 })
-
-export default model<Company>("Company", Company)
+const Company = model<CompanyType>("Company", CompanySchema)
+export default Company
